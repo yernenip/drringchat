@@ -64,6 +64,7 @@ else:
     person_full_name = person_name.replace('_', ' ').title()
     initial_prompt = f"What questions can I answer for {person_full_name}?"
 
+patient_history = patient_names.patients[person_name]
 st.session_state.patient_full_name = person_full_name
 st.session_state.patient_history = patient_names.patients[person_name]
 
@@ -82,7 +83,7 @@ if not is_patient_selected():
 
 
 def get_messages():
-    messages = [{"role":"system","content":get_prompt(st.session_state.patient_history)}]
+    messages = [{"role":"system","content":get_prompt(patient_history)}]
     for example in EXAMPLES:
         messages.append(example)
 
@@ -107,19 +108,19 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     
     if message["role"] == "assistant":
-        avatar = "https://cdn-icons-png.flaticon.com/512/3209/3209028.png"
+        avatar = "./images/nurse.png"
     else:
-        avatar = "https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-1024.png"
+        avatar = "./images/user.png"
     
     with st.chat_message(message["role"], avatar=avatar):
         st.markdown(message["content"])
 
 if prompt := st.chat_input(initial_prompt):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user", avatar="https://cdn4.iconfinder.com/data/icons/small-n-flat/24/user-1024.png"):
+    with st.chat_message("user", avatar="./images/user.png"):
         st.markdown(prompt)
 
-    with st.chat_message("assistant", avatar = "https://cdn-icons-png.flaticon.com/512/3209/3209028.png"):
+    with st.chat_message("assistant", avatar = "./images/nurse.png"):
         message_placeholder = st.empty()
         full_response = ""
         completion = client.chat.completions.create(
